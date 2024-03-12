@@ -1,0 +1,63 @@
+#Jorge Reya phantoms
+# +COG = above previous Red and closes above 20 ema to limit noise
+# -COG = above previous Red and closes below 20 ema to limit noise
+# we still need to add tos vwap
+input showLargerRedCandlePlot = yes;  # Input to turn on or off the larger red candle plot
+input showLargerGreenCandlePlot = yes;  # Input to turn on or off the larger green candle plot
+
+def price = close;
+def volume = volume;
+
+def EMA20 = ExpAverage(close, 20);
+
+
+def isPreviousGreenCandle = open[1] < close[1];
+def isCurrentRedCandle = open > close;
+
+def greenCandleSize = close[1] - open[1];
+def redCandleSize = open - close;
+
+#-COG
+def largerRedCandle = isPreviousGreenCandle and isCurrentRedCandle and close < low[1];
+
+def isPreviousRedCandle = open[1] > close[1];
+def isCurrentGreenCandle = open < close;
+
+def greenCandleSize2 = close - open;
+def redCandleSize2 = open[1] - close[1];
+
+#+COG
+def largerGreenCandle = isPreviousRedCandle and isCurrentGreenCandle and close > high[1];
+
+
+def largeGreenCandleAboveEMA = EMA20 < close ;
+def largerRedCandleBelowEMA = EMA20 > close ;
+
+
+# Plot the 20 EMA
+plot EMA20Plot = EMA20;
+EMA20Plot.SetDefaultColor(Color.Cyan);
+
+
+
+plot LargerRedCandlePlot = if showLargerRedCandlePlot and largerRedCandle  and largerRedCandleBelowEMA 
+  then low - TickSize() else Double.NaN;
+LargerRedCandlePlot.SetPaintingStrategy(PaintingStrategy.BOOLEAN_ARROW_DOWN);
+LargerRedCandlePlot.SetDefaultColor(Color.RED);
+
+AddLabel(showLargerRedCandlePlot and largerRedCandle and
+ largerRedCandleBelowEMA, "-COG", Color.RED);
+
+plot LargerGreenCandlePlot = if showLargerGreenCandlePlot and largerGreenCandle and  largeGreenCandleAboveEMA  
+ then low else Double.NaN;
+LargerGreenCandlePlot.SetPaintingStrategy(PaintingStrategy.BOOLEAN_ARROW_UP);
+LargerGreenCandlePlot.SetDefaultColor(Color.GREEN);
+
+AddLabel(showLargerGreenCandlePlot and largerGreenCandle
+ and largeGreenCandleAboveEMA, "+COG", Color.GREEN);
+
+AssignPriceColor(if showLargerRedCandlePlot and largerRedCandle and
+ largerRedCandleBelowEMA  then Color.PINK
+                 else if showLargerGreenCandlePlot and largerGreenCandle  and largeGreenCandleAboveEMA then Color.LIGHT_GREEN
+                 else Color.CURRENT);
+

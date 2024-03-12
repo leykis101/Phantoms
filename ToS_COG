@@ -30,12 +30,12 @@ def redCandleSize2 = open[1] - close[1];
 def largerGreenCandle = isPreviousRedCandle and isCurrentGreenCandle and close > high[1];
 
 #To capture all +COG and -COG ABOVE 20 AND BELOW 20 EMA 
-def largeGreenCandleAboveEMA = EMA20 < close ;
-def largerRedCandleBelowEMA = EMA20 > close ;
+#def largeGreenCandleAboveEMA = EMA20 < close ;
+#def largerRedCandleBelowEMA = EMA20 > close ;
 
 #To capture all +COG and -COG WITHOUT EMA FILTER, UNCOMMENT
-#def largeGreenCandleAboveEMA = close ;
-#def largerRedCandleBelowEMA =  close ;
+def largeGreenCandleAboveEMA = close ;
+def largerRedCandleBelowEMA =  close ;
 
 
 # Plot the 20 EMA
